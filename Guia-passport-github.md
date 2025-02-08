@@ -35,8 +35,8 @@ Save changes
 
     //Passport gitHub
 passport.use('github', new GithubStrategy({
-    clientID: 'Client ID: Iv23liikt0uEh0h4TsQy',
-    clientSecret: '',
+    clientID: 'Iv23liikt0uEh0h4TsQy', // los que aparezcan en mi perfil configurado de github
+    clientSecret: 'e30aeccbc48ca3aa5b8aaea300c5160e2b5bff41', // los que aparezcan en mi perfil configurado de github
     callbackURL: 'http://localhost:8080/api/sessions/githubcallback',
     
 }, async (accesToken, refreshToken, profile, done) => {
