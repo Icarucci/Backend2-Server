@@ -1,0 +1,187 @@
+loginGithub {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f7f7f7;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .login-container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 350px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  h1 {
+    margin: 0;
+    width: 100%;
+  }
+  
+
+  a {
+    display: block;
+    width: 100%;
+    padding: 10px 0;
+    text-decoration: none;
+  }
+  
+
+  .github-login-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 10px 20px;
+    background-color: #24292f;
+    color: white;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    box-sizing: border-box;
+  }
+  
+  .github-login-btn:hover {
+    background-color: #444d56;
+  }
+  
+  .github-login-btn:active {
+    background-color: #2d333b;
+  }
+  
+
+  .github-logo {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+  }
+
+  .pizza-logo img {
+    width: 80px;
+    height: auto;
+    transition: transform 0.9s ease;
+  }
+  
+  .pizza-logo img:hover {
+    transform: rotate(360deg)
+
+  }
+  
+  /** Header **/
+
+  .header {
+    display: flex;
+    width: 100%;
+    height: 100px;
+  }
+  
+  .section {
+    flex: 1;
+    height: 100%;
+  }
+  
+
+  .green {
+    background-color: #4caf50;
+  }
+  
+  .white {
+    background-color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .red {
+    background-color: #f44336;
+  }
+  
+  
+
+  .logo {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+  }
+
+  /** Footer **/
+
+.footer-italiano {
+    background-color: #f8f1e5;
+    color: #2e2e2e;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    text-align: center;
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+
+  
+  .footer-text {
+    max-width: 350px;
+    font-size:15px;
+    font-style: italic;
+    color: #6f6f6f;
+  }
+  
+  .footer-text p {
+    margin: 5px 0;
+  }
+  
+  .footer-icons a {
+    margin: 0 20px;
+  }
+  
+  .footer-icon {
+    width: 40px;
+    height: 40px;
+    transition: transform 0.2s ease;
+  }
+  
+  .footer-icon:hover {
+    transform: scale(1.1);
+  }
+  
+  @media (max-width: 768px) {
+    .footer-content {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .footer-logo img {
+      width: 60px;
+    }
+  
+    .footer-icons {
+      margin-top: 20px;
+    }
+  }
+  
+  

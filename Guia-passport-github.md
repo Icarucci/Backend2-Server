@@ -77,3 +77,36 @@ passport.use('github', new GithubStrategy({
 
 5) Agrego al server.js
 
+    import passport from 'passport'
+    import initializePassport from './config/passport.config.js'
+
+    // Inicializar passport
+    initializePassport(passport)
+    app.use(passport.initialize())
+    app.use(passport.session())
+
+    // Rutas
+    app.use('/api/sessions', sessionRouter)
+    app.use('/public', express.static(__dirname + '/public')) // Concateno rutas
+    app.get('/', (req, res) => {
+        res.status(200).send("Hola desde el inicio")
+    })
+
+6) Session.routes:
+
+import { Router } from "express";
+import { login, register, viewLogin, viewRegister, gitHub } from "../controllers/sessions.controllers.js";
+import passport from "passport";
+
+const sessionRouter = Router()
+
+sessionRouter.post('/login', passport.authenticate('login'), login)
+sessionRouter.post('/register', passport.authenticate('register'), register)
+sessionRouter.get('/viewregister', viewRegister)
+sessionRouter.get('/viewlogin', viewLogin)
+sessionRouter.get('/github', passport.authenticate('github', {scope: ['user:email']}), async (req, res) => {})
+sessionRouter.get('/githubcallback', passport.authenticate('github', {failureRedirect: '/login'}), gitHub )
+
+export default sessionRouter;
+
+7) 
