@@ -1,3 +1,8 @@
+html {
+  padding: 0;
+  margin: 0;
+}
+
 loginGithub {
     font-family: 'Roboto', sans-serif;
     background-color: #f7f7f7;
@@ -83,6 +88,14 @@ loginGithub {
     transform: rotate(360deg)
 
   }
+
+  .background {
+    background-image: url('./images/Fondo\ Davinci\ Final.PNG');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  
   
   /** Header **/
 

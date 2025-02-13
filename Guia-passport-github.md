@@ -109,4 +109,34 @@ sessionRouter.get('/githubcallback', passport.authenticate('github', {failureRed
 
 export default sessionRouter;
 
-7) 
+7) En el passport.config edito
+
+//Passport gitHub
+passport.use('github', new GithubStrategy({
+    clientID: 'Iv23liikt0uEh0h4TsQy',
+    clientSecret: 'e30aeccbc48ca3aa5b8aaea300c5160e2b5bff41',
+    callbackURL: 'http://localhost:8080/api/sessions/githubcallback',
+    
+}, async (accesToken, refreshToken, profile, done) => {
+    try {
+        console.log(profile)
+        console.log(accesToken)
+        console.log(refreshToken)
+
+        let user = await userModel.findOne({email: profile._json.email})
+        if(!user) {
+            const user = await userModel.create({
+                first_name: profile._json.name,
+                last_name: " ", // Dato no proporcionado por gh
+                email: profile._json.email,
+                password: '1234', // Dato no proporcionado, generar pssport por defecto
+                age: 18 // Dato no proporcionado por gh
+            })
+            done(null, user)
+        } else {
+            done(null, user)
+        }
+    } catch (e) {
+        console.error(e);
+    }
+})) 

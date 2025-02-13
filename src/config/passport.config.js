@@ -60,10 +60,14 @@ passport.use('github', new GithubStrategy({
 
         let user = await userModel.findOne({email: profile._json.email})
         if(!user) {
-            let newUser = {
-
-            }
-            done(null, true)
+            const user = await userModel.create({
+                first_name: profile._json.name,
+                last_name: " ", // Dato no proporcionado por gh
+                email: profile._json.email,
+                password: '1234', // Dato no proporcionado, generar pssport por defecto
+                age: 18 // Dato no proporcionado por gh
+            })
+            done(null, user)
         } else {
             done(null, user)
         }
