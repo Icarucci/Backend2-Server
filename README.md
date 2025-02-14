@@ -596,3 +596,356 @@ export const viewLogin = (req, res) => {
 
 65) Para PAssportgithub ver guia de passport-github
 
+66) Creacion de cart y products
+
+67) En la carpeta models creamos dos archivos
+
+    cart.js
+    product.js
+
+68) Cart.js
+
+import { Schema, model } from "mongoose";
+
+const cartSchema = new Schema({
+    products: {
+        type:[
+            {
+                id_prod: {
+                    type: Schema.Types.ObjectId, 
+                    required: true,
+                    ref: 'Product'},
+                quantity: {
+                    type: Number,
+                    required: true, 
+                    default: 1}
+            }
+        ],
+        default: []
+    }
+})
+
+cartSchema.pre('findOne', function(){
+    this.populate('products.id_prod')
+}
+)
+
+const cartModel = model("carts", cartSchema)
+
+export default cartModel;
+
+69) instalamos paginate
+
+npm i mongoose-paginate-v2
+
+70) Product.js
+
+import { Schema, model } from "mongoose";
+import { paginate } from "mongoose-paginate-v2";
+
+const productSchema = new Schema({
+    title: {
+        type: String,
+        required: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
+    category: {
+        type: String,
+        required: true,
+        index: true
+    },
+    status: {
+        type: String,
+        default: true
+    },
+    price: {
+        type: Number,
+        required: true
+    },
+    stock: {
+        type: Number,
+        required: true
+    },
+    code: { 
+        type: String, 
+        required: true,
+        unique: true
+    },
+    thumbnail: {
+        default: [],
+    },
+})
+
+productSchema.plugin(paginate)
+
+const productModel = model("products", productSchema)
+
+export default productModel;
+
+71) Creamos el productsController.js dentro de controller
+    
+    import productModel from "../models/product.js";
+
+export const getProducts = async (req, res) => {
+    try {
+        const {limit, page, metfilter, filter, metOrder, ord} = req.query
+        
+        const pag = page !== undefined ? page : 1
+        const limi = limit !== undefined? limit : 10
+
+        const filQuery = metfilter !== undefined ? {[metfilter] : filter} : {}
+        const ordQuery = metOrder !== undefined ? {metOrder : ord} : {}
+
+        const prods = await productModel.paginate(filQuery, {limit: limi, page: pag, ordQuery})
+        console.log(prods);
+
+        res.status(200).render('templates/home', {prods});
+
+
+    } catch (e) {
+        res.status(500).render('templates/error', {e});
+    }
+};
+    
+export const getProduct = async (req, res) => {
+    try {
+        const idProd = req.params.pid;
+        const prod = await productModel.findById(idProd);
+        if(prod)
+            res.status(200).render('templates/product' , {prod})
+        else
+            res.status(404).render('templates/error', {e: 'Producto no encontrado'})
+    } catch (e) {
+        res.status(500).render('templates/error', {e} )
+    }
+};
+
+export const createProduct = async (req, res) => {
+    try {
+        const product = req.body
+        const rta = await productModel.create(product)
+        res.status(201).redirect('templates/home', {rta})
+    } catch (e) {
+        res.status(500).render('templates/error', {e})
+    }
+};
+
+export const updateProducts = async (req, res) => {
+    try {
+        const updateProduct = req.body
+        const idProd = req.params.pid
+        const rta = await productModel.findByIdAndUpdate(idProd, updateProduct)
+        if(rta)
+            res.status(200).redirect('templates/home', {rta})
+        else
+            res.status(404).render('templates/error', {e: 'Producto no encontrado'})
+    } catch (e) {
+        res.status(500).render('templates/error', {e})
+    }
+};
+
+export const deleteProducts = async (req, res, next) => {
+    try {
+        const idProd = req.params.pid
+        const rta = await productModel.findByIdAndDelete(idProd)
+        if(rta)
+            res.status(200).redirect('templates/home', {rta})
+        else
+            res.status(404).render('templates/error', {e: 'Producto no encontrado'})
+    } catch (e) {
+        res.status(500).render('templates/error', {e})
+    }
+}; 
+
+72) Creamos el products.routes.js dentro de routes
+
+import { Router } from "express";
+import { getProduct, getProducts, updateProducts, deleteProducts, createProduct } from "../controllers/productsController";
+
+const productRouter = Router();
+
+productRouter.get('/', getProducts);
+
+productRouter.get('/:pid', getProduct);
+
+productRouter.post('/', createProduct);
+
+productRouter.put('/:pid', updateProducts);
+
+productRouter.delete('/:pid', deleteProducts);
+
+export default productRouter;
+
+73) En server.js agregamos lo siguiente:
+
+import productRouter from './routes/products.routes.js';
+app.use('api/products', productRouter)
+
+74) Creamos el cartsController.js dentro de controllers
+
+import cartModel from "../models/cart.js";
+
+export const getCart = async (req, res) => {
+    try {
+        const cartId = req.params.cartId
+        const cart = await cartModel.findOne({_id: cartId})
+        if (cart) {
+            res.status(200).send(cart); //200 es OK
+        } else {
+            res.status(404).send({ message: 'Carrito no encontrado' });
+        }
+    } catch (e) {
+       res.status(500).render('templates/error', {e}) 
+    }
+}
+
+export const createCart = async (req, res) => {
+    try {
+        const rta = await cartModel.create({products: []});
+        res.status(201).send(rta); //201 es created
+    } catch (e) {
+       res.status(500).render('templates/error', {e}) 
+    }
+}
+
+export const insertProductCart = async (req, res) => {
+    try {
+        const cartId = req.params.cid
+        const productId = req.params.pid
+        const {quantity} = req.body
+        const cart = await cartModel.findOne({_id: cartId})
+        if (cart) {
+            const indice = cart.products.findIndex(prod => prod._id == productId)
+            if(indice != -1) {
+                cart.products[indice].quantity = quantity
+
+            }else{
+                cart.products.push({_id: productId, quantity: quantity})
+
+            }
+
+            const rta = await cartModel.findByIdAndUpdate(cartId, cart)
+            return res.status(200).send(rta); //200 es OK
+        } else {
+            res.status(404).send({ message: 'Carrito no encontrado' });
+            return;
+        }
+
+    } catch (e) {
+       res.status(500).render('templates/error', {e}) 
+    }
+}
+export const updateProductCart = async (req, res) => {
+    try {
+        const cartId = req.params.cid
+        const {newProduct} = req.body
+        const cart = await cartModel.findOne({_id: cartId})
+        cart.products = newProduct
+        cart.save()
+        res.status(200).send(cart)
+
+    } catch (e) {
+       res.status(500).render('templates/error', {e}) 
+    }
+}
+
+export const updateQuantityProductCart = async (req, res) => {
+    try {
+        const cartId = req.params.cid
+        const productId = req.params.pid
+        const {quantity} = req.body
+        const cart = await cartModel.findOne({_id: cartId})
+        if (cart) {
+            const indice = cart.products.findIndex(prod => prod._id == productId)
+            if(indice != -1) {
+                cart.products[indice].quantity = quantity
+                cart.save()
+                res.status(200).send(cart)
+            }else{
+                res.status(404).send("Producto no encontrado")
+
+            }
+
+        } else {
+            res.status(404).send({ message: 'Carrito no encontrado' });
+        }
+
+    } catch (e) {
+       res.status(500).render('templates/error', {e}) 
+    }
+}
+
+export const deleteProductCart = async (req, res) => {
+    try {
+        const cartId = req.params.cid
+        const productId = req.params.pid
+        const cart = await cartModel.findOne({_id: cartId})
+        if (cart) {
+            const indice = cart.products.findIndex(prod => prod._id == productId)
+            if(indice != -1) {
+                cart.products.splice(indice, 1)
+                cart.save()
+                res.status(200).send(cart)
+            }else{
+                res.status(404).send("Producto no existe")
+
+            }
+
+        } else {
+            res.status(404).send({ message: 'Carrito no existe' });
+        }
+
+    } catch (e) {
+       res.status(500).render('templates/error', {e}) 
+    }
+}
+
+export const deleteCart = async (req, res) => {
+    try {
+        const cartId = req.params.cid
+        const cart = await cartModel.findOne({_id: cartId})
+        if (cart) {
+            cart.products = []
+            cart.save()
+            res.status(200).send({ message: 'Carrito eliminado con exito' }); //200 es OK
+            
+        } else {
+            res.status(404).send({ message: 'Carrito no existe' })
+        }    
+    
+    } catch (e) {
+       res.status(500).render('templates/error', {e}) 
+    }
+}
+
+75) Creamos el carts.routes.js dentro de routes
+
+import { Router }   from "express";
+import { getCart, createCart, insertProductCart, updateProductCart, updateQuantityProductCart, deleteCart, deleteProductCart } from "../controllers/cartsController.js";
+
+const cartRouter = Router();
+
+cartRouter.get('/:cid', getCart);
+
+cartRouter.post('/', createCart);
+
+cartRouter.post('/:cid/products/:pid', insertProductCart);
+
+cartRouter.put('/:cid', updateProductCart);
+
+cartRouter.put('/:cid/products/:pid', updateQuantityProductCart);
+
+cartRouter.delete('/:cid', deleteCart);
+
+cartRouter.delete('/:cid/products/:pid', deleteProductCart);
+
+export default cartRouter;
+
+
+76) en server.js ponemos:
+
+import cartRouter from './routes/cart.routes.js'
+app.use('/api/carts', cartRouter);

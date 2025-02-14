@@ -12,6 +12,8 @@ import path from 'path'
 import { __dirname } from './path.js'
 import passport from 'passport'
 import initializePassport from './config/passport.config.js'
+import productRouter from './routes/products.routes.js';
+import cartRouter from './routes/cart.routes.js'
 
 
 
@@ -55,11 +57,14 @@ app.set('view engine', 'handlebars')
 app.set('views', path.join(__dirname, 'views')); // COncateno evitando errores de / o de \
 
 // Rutas
+app.use('/api/carts', cartRouter);
+app.use('/api/products', productRouter)
 app.use('/api/sessions', sessionRouter)
 app.use('/public', express.static(__dirname + '/public')) // Concateno rutas
 app.get('/', (req, res) => {
     res.status(200).send("Hola desde el inicio")
 })
+
 
 // Middleware para verificar la session
 const autorizacion = (req, res, next) => {
