@@ -10,7 +10,15 @@ export const getProducts = async (req, res) => {
         const filQuery = metfilter !== undefined ? {[metfilter] : filter} : {}
         const ordQuery = metOrder !== undefined ? {metOrder : ord} : {}
 
-        const prods = await productModel.paginate(filQuery, {limit: limi, page: pag, ordQuery})
+        const prods = await productModel.paginate(filQuery, {limit: limi, page: pag, ordQuery, lean: true})
+        console.log(prods);
+
+        prods.pageNumbers = Array.from({length: prods.totalPages}, (_, i) => ({
+            number: i + 1,
+            isCurrent: i + 1 === prods.page
+
+        }));
+
         console.log(prods);
 
         res.status(200).render('templates/home', {prods});
@@ -38,7 +46,7 @@ export const createProduct = async (req, res) => {
     try {
         const product = req.body
         const rta = await productModel.create(product)
-        res.status(201).redirect('templates/home', {rta})
+        res.status(201).send("Producto creado")
     } catch (e) {
         res.status(500).render('templates/error', {e})
     }

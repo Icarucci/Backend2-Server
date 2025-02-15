@@ -4,6 +4,7 @@ import { validatePassword, createHash } from "../utils/bcrypt.js";
 import userModel from "../models/users.models.js";
 import GithubStrategy from 'passport-github2'
 import { application } from "express";
+import { create } from "express-handlebars";
 
 const localStrategy = local.Strategy // Defuni la estrategia local
 
@@ -64,7 +65,7 @@ passport.use('github', new GithubStrategy({
                 first_name: profile._json.name,
                 last_name: " ", // Dato no proporcionado por gh
                 email: profile._json.email,
-                password: '1234', // Dato no proporcionado, generar pssport por defecto
+                password: createHash("1234"), // Dato no proporcionado, generar pssport por defecto
                 age: 18 // Dato no proporcionado por gh
             })
             done(null, user)

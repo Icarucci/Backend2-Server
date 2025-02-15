@@ -675,7 +675,8 @@ const productSchema = new Schema({
         unique: true
     },
     thumbnail: {
-        default: [],
+        type: String,
+        default: "",
     },
 })
 
@@ -687,7 +688,7 @@ export default productModel;
 
 71) Creamos el productsController.js dentro de controller
     
-    import productModel from "../models/product.js";
+import productModel from "../models/product.js";
 
 export const getProducts = async (req, res) => {
     try {
@@ -699,9 +700,17 @@ export const getProducts = async (req, res) => {
         const filQuery = metfilter !== undefined ? {[metfilter] : filter} : {}
         const ordQuery = metOrder !== undefined ? {metOrder : ord} : {}
 
-        const prods = await productModel.paginate(filQuery, {limit: limi, page: pag, ordQuery})
+        const prods = await productModel.paginate(filQuery, {limit: limi, page: pag, ordQuery, lean: true})
         console.log(prods);
 
+        prods.pageNumbers = Array.from({length: prods.totalPages}, (_, i) => ({
+            number: i + 1,
+            isCurrent: i + 1 === prods.page
+
+        }));
+
+        console.log(prods);
+        
         res.status(200).render('templates/home', {prods});
 
 
@@ -727,7 +736,7 @@ export const createProduct = async (req, res) => {
     try {
         const product = req.body
         const rta = await productModel.create(product)
-        res.status(201).redirect('templates/home', {rta})
+        res.status(201).send("Producto creado")
     } catch (e) {
         res.status(500).render('templates/error', {e})
     }
@@ -949,3 +958,91 @@ export default cartRouter;
 
 import cartRouter from './routes/cart.routes.js'
 app.use('/api/carts', cartRouter);
+
+77) Para utilizar JWT vemos Guia-JWT
+
+78) Asignar el carrito al usuario creado
+
+79) En user.models.js incorporamos lo siguient:
+
+import cartModel from "./cart.js";
+
+80) Luego editamos el usuario agregando:
+
+    cart: {
+        type: Schema.Types.ObjectId,
+        ref: 'carts',
+    },
+
+81) Y agregamos la siguiente logica:
+
+//Genero un nuevo carrito al crear el usuario
+userSchema.post("save", async function name(userCreated){
+    try {
+        const newCart = await cartModel.create({products: []})
+        userCreated.cart = newCart._id // Enlazo el ide del carrito con el usuario creado
+        await userCreated.updateOne({ cart: newCart._id });
+    } catch (e) {
+        console.log("Error al crear el carrito del usuario", e);
+    }
+
+})
+
+82) Editamos el home.handlebars:
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Productos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/public/styles.css">
+</head>
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Nuestros productos</h1>
+    <div class="row">
+        {{#each prods.docs}}
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <a href="/api/products/{{this._id}}">
+                    <img src="{{this.thumbnail}}" class="card-img-top" alt="Producto" />
+                </a>
+                <div class="card-body italy-card">
+                    <h5 class="card-title">{{this.title}}</h5>
+                    <p class="card-text"><strong>Ingredientes: </strong>{{this.description}}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <p class="card-precio mb-0">Valor: $ {{this.price}}</p>
+                        <a href="/api/products/{{this._id}}" class="btn btn-primary">Agregar al carrito</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+    <!-- Paginacion -->
+    <nav aria-label="Page Navigation">
+        <ul class="pagination justify-content-center">
+            {{#if prods.hasPrevPage}}
+            <li class="page-item">
+                <a class="page-link" href="?page={{prods.prevPage}}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            {{/if}}
+            {{#each prods.pageNumbers}}
+            <li class="page-item {{#if this.isCurrent}}active{{/if}}">
+                <a class="page-link" href="?page={{this.number}}">{{this.number}}</a>
+            </li>
+            {{/each}}
+            {{#if prods.hasNextPage}}
+            <li class="page-item">
+                <a class="page-link" href="?page={{prods.nextPage}}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+            {{/if}}
+        </ul>
+    </nav>
+</div>
+
+83) 

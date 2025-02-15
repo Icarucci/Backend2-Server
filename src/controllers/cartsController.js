@@ -35,7 +35,7 @@ export const insertProductCart = async (req, res) => {
                 cart.products[indice].quantity = quantity
 
             }else{
-                cart.products.push({_id: productId, quantity: quantity})
+                cart.products.push({id_prod: productId, quantity: quantity})
 
             }
 

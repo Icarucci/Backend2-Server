@@ -33,7 +33,8 @@ const productSchema = new Schema({
         unique: true
     },
     thumbnail: {
-        default: [],
+        type: String,
+        default: "",
     },
 })
 
