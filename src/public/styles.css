@@ -218,3 +218,59 @@ loginGithub {
   background: linear-gradient(to right, rgba(143, 220, 104, 0.5) 33%, rgba(255, 255, 255, 0.5) 33%, rgba(255, 255, 255, 0.5) 66%, rgba(240, 54, 54, 0.5) 66%);
   transition: background-color 0.3s ease;
 }
+
+.tabla-madera {
+  background: url('https://www.transparenttextures.com/patterns/wood-pattern.png');
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+  border: 2px solid #8b5e3c;
+  position: relative;
+  padding: 20px;
+  box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.1), 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilo base del botón */
+.btn-fire {
+  position: relative;
+  padding: 5px 15px;
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  background-color: #585858e0;
+  color: #fff;
+  outline: none;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.4s ease-in-out;
+}
+
+
+.btn-fire::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  background: radial-gradient(circle, rgba(255, 69, 0, 0.8), rgba(255, 140, 0, 0.5), rgba(255, 69, 0, 0));
+  border-radius: 50px;
+  z-index: -1;
+  transform: scale(0);
+  transition: transform 0.4s ease-in-out;
+}
+
+
+.btn-fire:hover {
+  color: #333;
+  background-color: #f1c40f; /* Color cuando el fuego está activo */
+  box-shadow: 0 0 10px rgba(255, 69, 0, 0.7), 0 0 20px rgba(255, 69, 0, 0.5); /* Efecto de fuego alrededor */
+}
+
+
+.btn-fire:hover::before {
+  transform: scale(1);
+}
+

@@ -11,7 +11,7 @@
     <div class="row">
         {{#each prods.docs}}
         <div class="col-md-4 mb-4">
-            <div class="card shadow-sm h-100">
+            <div class="card shadow-sm h-100 tabla-madera">
                 <a href="/api/products/{{this._id}}">
                     <img src="{{this.thumbnail}}" class="card-img-top" alt="Producto" />
                 </a>
@@ -20,7 +20,7 @@
                     <p class="card-text"><strong>Ingredientes: </strong>{{this.description}}</p>
                     <div class="d-flex justify-content-between align-items-center">
                         <p class="card-precio mb-0">Valor: $ {{this.price}}</p>
-                        <a href="/api/products/{{this._id}}" class="btn btn-primary">Agregar al carrito</a>
+                        <a href="/api/products/{{this._id}}" class="btn btn-fire">Agregar al carrito</a>
                     </div>
                 </div>
             </div>
