@@ -980,7 +980,7 @@ import cartModel from "./cart.js";
 userSchema.post("save", async function name(userCreated){
     try {
         const newCart = await cartModel.create({products: []})
-        userCreated.cart = newCart._id // Enlazo el ide del carrito con el usuario creado
+        userCreated.cart = newCart._id // Enlazo el id del carrito con el usuario creado
         await userCreated.updateOne({ cart: newCart._id });
     } catch (e) {
         console.log("Error al crear el carrito del usuario", e);
@@ -1045,4 +1045,4 @@ userSchema.post("save", async function name(userCreated){
     </nav>
 </div>
 
-83) 
+83) Ver guia de passport-jwt

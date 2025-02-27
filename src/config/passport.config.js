@@ -1,12 +1,37 @@
 import passport from "passport";
-import local from "passport-local";
+import local, { Strategy } from "passport-local";
 import { validatePassword, createHash } from "../utils/bcrypt.js";
 import userModel from "../models/users.models.js";
 import GithubStrategy from 'passport-github2'
 import { application } from "express";
 import { create } from "express-handlebars";
+import jwt from "passport-jwt";
 
 const localStrategy = local.Strategy // Defuni la estrategia local
+const JWTStrategy = jwt.Strategy
+const ExtractJWT = jwt.ExtractJwt
+const cookieExtractor = (req) =>{
+    let token = null;
+    if(req && req.cookies){
+        token = req.cookies['coderCookie'] //Consulto solamente por las cookies con este nombre
+        console.log(req.cookies['coderCookie']);
+    }
+    return token
+}
+
+//Control de errores por mensajes
+export const passportCall = (strategy) =>{
+    return async(req, res, next) =>{
+        passport.authenticate(strategy, function(err, user, info){
+            if(err)
+                return next(err)
+            if(!user)
+                return res.status(401).send({error: info?.messages ? info.messages: info.toString()})
+            req.user = user
+            next()
+        })(req,res,next);
+    }
+}
 
 const initializePassport = () => {
     passport.use('register', new localStrategy({passReqToCallback: true, usernameField: 'email'}, async (req,username, password, done) => {
@@ -91,5 +116,22 @@ passport.use('github', new GithubStrategy({
         }
     });
 }
+
+
+//Pasos necesarios para trabajar via JWT
+
+passport.use('jwt', new JWTStrategy({
+    jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
+    secretOrKey: 'codercoder'
+
+}, async (jwt_payload, done) => {
+    try {
+        return done(null, jwt_payload)
+    } catch (e) {
+        return done(e);
+    }
+}));
+
+//Fin jwt
 
 export default initializePassport;

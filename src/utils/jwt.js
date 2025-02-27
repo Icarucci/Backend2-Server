@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 
 let secretKey = "codercoder"
 
-const generateToken = (user) => {
+export const generateToken = (user) => {
     //Crear el token con la información del usuario
 
     //parametro 1: Objeto a guardar
