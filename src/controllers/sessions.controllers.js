@@ -11,7 +11,7 @@ export const login = async (req, res) => {
         } else{
             //Passport-jwt
             const token = generateToken(req.user);
-            res.cookie('cookie', token, {
+            res.cookie('coderCookie', token, {
                 httpOnly: true,
                 secure: false, // Evitar errores https
                 maxAge: 3600000 // Una hora
@@ -54,11 +54,17 @@ export const viewLogin = (req, res) => {
 
 export const gitHub = (req, res) => {
     try {
-            req.session.user = {
-                email: req.user.email,
-                first_name: req.user.first_name
-            }
-            res.status(200).redirect('/');
+        const token = generateToken(req.user);
+        req.session.user = {
+            email: req.user.email,
+            first_name: req.user.first_name
+        }
+        res.cookie('coderCookie', token, {
+            httpOnly: true,
+            secure: false, // Evitar errores https
+            maxAge: 3600000 // Una hora
+        })
+        res.status(200).redirect('/api/products');
     } catch (e) {
         console.log(e);
         res.status(500).send("Error al loguear usuario");

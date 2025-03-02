@@ -11,7 +11,7 @@ export const getProducts = async (req, res) => {
         const ordQuery = metOrder !== undefined ? {metOrder : ord} : {}
 
         const prods = await productModel.paginate(filQuery, {limit: limi, page: pag, ordQuery, lean: true})
-        console.log(prods);
+
 
         prods.pageNumbers = Array.from({length: prods.totalPages}, (_, i) => ({
             number: i + 1,
@@ -19,7 +19,7 @@ export const getProducts = async (req, res) => {
 
         }));
 
-        console.log(prods);
+
 
         res.status(200).render('templates/home', {prods});
 

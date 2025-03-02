@@ -24,7 +24,7 @@ const hbs = create()
 
 app.use(express.json())
 app.use('/api/users', userRouter)
-app.use(cookieParser("CookieConPassword"))// Si agrego contraseña, la cookie pasa a estar firmada
+app.use(cookieParser('codercoder'))// Si agrego contraseña, la cookie pasa a estar firmada
 app.use(session({
     // ttl: Time to live (tiempo de vida) en segundo
     // retries: Cantidad de veces que el servidor va a intentar leer el archivo
@@ -74,6 +74,7 @@ const autorizacion = (req, res, next) => {
         res.status(401).send("No tienes permisos para acceder a esta ruta")//401 error de autenticación
     }
 }
+
 
 /* -------------Comentamos-------------------
 

@@ -8,5 +8,3 @@ export const validatePassword = (passIngresada, passBD) => compareSync(passIngre
 
 const passEncriptada = createHash("coderhouse")
 
-console.log(passEncriptada)
-console.log(validatePassword("coderhouse", passEncriptada));

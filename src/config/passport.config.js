@@ -12,9 +12,11 @@ const JWTStrategy = jwt.Strategy
 const ExtractJWT = jwt.ExtractJwt
 const cookieExtractor = (req) =>{
     let token = null;
+    console.log(req)
     if(req && req.cookies){
-        token = req.cookies['coderCookie'] //Consulto solamente por las cookies con este nombre
-        console.log(req.cookies['coderCookie']);
+        
+        token = req.cookies.coderCookie //Consulto solamente por las cookies con este nombre
+        
     }
     return token
 }
@@ -80,9 +82,7 @@ passport.use('github', new GithubStrategy({
     
 }, async (accesToken, refreshToken, profile, done) => {
     try {
-        console.log(profile)
-        console.log(accesToken)
-        console.log(refreshToken)
+
 
         let user = await userModel.findOne({email: profile._json.email})
         if(!user) {
@@ -104,7 +104,12 @@ passport.use('github', new GithubStrategy({
 
     //Pasos necesarios para trabajar via HTTP
     passport.serializeUser((user, done) => {
+        if(user?._id){
         done(null, user._id);
+        } else {
+            done(null, user.user._id);
+        }
+
     });
 
     passport.deserializeUser(async (id, done) => {

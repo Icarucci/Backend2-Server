@@ -12,15 +12,4 @@ export const generateToken = (user) => {
     return token
 }
 
-console.log(
 
-generateToken({
-    //Función para generar un token JWT con la información del usuario
-    //user: Objeto con la información del usuario (email, nombre, etc.)
-    //Devuelve el token JWT
-    first_name: "Ignacio Nicolas Carucci",
-    last_name: " ",
-    email: "ignaciocarucci@hotmail.com",
-    age: 18,
-    rol: "Usuario"
-}))
