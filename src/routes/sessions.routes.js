@@ -11,7 +11,6 @@ sessionRouter.get('/viewregister', viewRegister)
 sessionRouter.get('/viewlogin', viewLogin)
 sessionRouter.get('/github', passport.authenticate('github', {scope: ['user:email']}), async (req, res) => {})
 sessionRouter.get('/githubcallback', passport.authenticate('github', {failureRedirect: '/login'}),gitHub)
-
-sessionRouter.get('/current', passport.authenticate('jwt'), async (req, res) => res.send(req.user));
+sessionRouter.get('/current', passportCall('jwt'), async (req, res) => {res.send(req.user)});
 
 export default sessionRouter;

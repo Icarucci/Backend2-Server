@@ -109,18 +109,19 @@ export const login = async (req, res) => {
 12) En passport.config agregamos
 
 //Control de errores por mensajes
-export const passportCall = (strategy) =>{
-    return async(req, res, next) =>{
-        passport.authenticate(strategy, function(err, user, info){
-            if(err)
-                return next(err)
-            if(!user)
-                return res.status(401).send({error: info?.messages ? info.messages: info.toString()})
-            req.user = user
-            next()
-        })(req,res,next);
-    }
-}
+export const passportCall = (strategy) => {
+    return async (req, res, next) => {
+        passport.authenticate(strategy, function (err, user, info) {
+            if (err) return next(err);
+            if (!user) {
+                return res.status(401).send('<pre>La autenticación falló.\nMotivo: ' + (info?.message ? info.message : info.toString()) + '</pre>');
+
+            }
+            req.user = user;
+            next();
+        })(req, res, next);
+    };
+};
 
 
 13) Luego en sessions.routes

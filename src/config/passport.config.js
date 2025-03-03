@@ -12,7 +12,6 @@ const JWTStrategy = jwt.Strategy
 const ExtractJWT = jwt.ExtractJwt
 const cookieExtractor = (req) =>{
     let token = null;
-    console.log(req)
     if(req && req.cookies){
         
         token = req.cookies.coderCookie //Consulto solamente por las cookies con este nombre
@@ -22,18 +21,19 @@ const cookieExtractor = (req) =>{
 }
 
 //Control de errores por mensajes
-export const passportCall = (strategy) =>{
-    return async(req, res, next) =>{
-        passport.authenticate(strategy, function(err, user, info){
-            if(err)
-                return next(err)
-            if(!user)
-                return res.status(401).send({error: info?.messages ? info.messages: info.toString()})
-            req.user = user
-            next()
-        })(req,res,next);
-    }
-}
+export const passportCall = (strategy) => {
+    return async (req, res, next) => {
+        passport.authenticate(strategy, function (err, user, info) {
+            if (err) return next(err);
+            if (!user) {
+                return res.status(401).send('<pre>La autenticación falló.\nMotivo: ' + (info?.message ? info.message : info.toString()) + '</pre>');
+
+            }
+            req.user = user;
+            next();
+        })(req, res, next);
+    };
+};
 
 const initializePassport = () => {
     passport.use('register', new localStrategy({passReqToCallback: true, usernameField: 'email'}, async (req,username, password, done) => {
@@ -104,12 +104,7 @@ passport.use('github', new GithubStrategy({
 
     //Pasos necesarios para trabajar via HTTP
     passport.serializeUser((user, done) => {
-        if(user?._id){
         done(null, user._id);
-        } else {
-            done(null, user.user._id);
-        }
-
     });
 
     passport.deserializeUser(async (id, done) => {
@@ -131,7 +126,7 @@ passport.use('jwt', new JWTStrategy({
 
 }, async (jwt_payload, done) => {
     try {
-        return done(null, jwt_payload)
+        return done(null, jwt_payload.user)
     } catch (e) {
         return done(e);
     }
