@@ -14,17 +14,20 @@ import passport from 'passport'
 import initializePassport from './config/passport.config.js'
 import productRouter from './routes/products.routes.js';
 import cartRouter from './routes/cart.routes.js'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 
 
 const app = express()
-const PORT = 8080
+const PORT = process.env.PORT
 const hbs = create()
 //const fileStorage = new FileStore(session)
 
 app.use(express.json())
 app.use('/api/users', userRouter)
-app.use(cookieParser('codercoder'))// Si agrego contraseña, la cookie pasa a estar firmada
+app.use(cookieParser(process.env.SECRET_COOKIE))// Si agrego contraseña, la cookie pasa a estar firmada
 app.use(session({
     // ttl: Time to live (tiempo de vida) en segundo
     // retries: Cantidad de veces que el servidor va a intentar leer el archivo
@@ -32,17 +35,17 @@ app.use(session({
     // Comentamos el store: ya que la nueva conexion sera por Mongo
     // store: new fileStorage({path: './src/sessions', ttl: 60, retries: 1}),
     store: MongoStore.create({
-        mongoUrl:'mongodb+srv://ignaciocarucci:EMR0Q9b3rZGViZbd@backend2.y4q03.mongodb.net/?retryWrites=true&w=majority&appName=Backend2',
+        mongoUrl: process.env.URL_MONGO,
         ttl: 15
     }),
-    secret: 'SesionSecreta',
+    secret: process.env.SECRET_SESSION,
     resave: true, // Resave permite mantener la session activa en caso de que la session se mantenga inactiva. Si se deja en false, ante cualquier inactividad, la session se cierra.
     saveUninitialized: true, // saveUninitialized permite mantener la session activa aun cuando el objeto de la session no contenga nada. Si se deja en false, y el objeto quedo vacio al finalizar la consulta, la session no se guardará.
 }))
 
 // Conexion Mongoose
 
-mongoose.connect('mongodb+srv://ignaciocarucci:EMR0Q9b3rZGViZbd@backend2.y4q03.mongodb.net/?retryWrites=true&w=majority&appName=Backend2')
+mongoose.connect(process.env.URL_MONGO)
 .then(() => console.log('Conectado a BD por Mongoose'))
 .catch((error) => console.log('Error al conectarse a BD por Mongoose', error))
 

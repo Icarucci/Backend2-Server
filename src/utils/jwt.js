@@ -1,6 +1,9 @@
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv'
 
-let secretKey = "codercoder"
+dotenv.config()
+
+let secretKey = process.env.SECRET_KEY_JWT
 
 export const generateToken = (user) => {
     //Crear el token con la información del usuario
