@@ -1046,3 +1046,5 @@ userSchema.post("save", async function name(userCreated){
 </div>
 
 83) Ver guia de passport-jwt
+
+84) Ver guia de middleware-autorizacion
