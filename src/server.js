@@ -5,16 +5,17 @@ import cookieParser from 'cookie-parser'
 import session from 'express-session'
 //import FileStore from 'session-file-store'
 import MongoStore from 'connect-mongo'
-import sessionRouter from './routes/sessions.routes.js'
+//import sessionRouter from './routes/sessions.routes.js'
 import e from 'express'
 import { create } from 'express-handlebars'
 import path from 'path'
 import { __dirname } from './path.js'
 import passport from 'passport'
 import initializePassport from './config/passport.config.js'
-import productRouter from './routes/products.routes.js';
-import cartRouter from './routes/cart.routes.js'
+//import productRouter from './routes/products.routes.js';
+//import cartRouter from './routes/cart.routes.js'
 import dotenv from 'dotenv'
+import indexRouter from './routes/index.routes.js'
 
 dotenv.config()
 
@@ -60,13 +61,11 @@ app.set('view engine', 'handlebars')
 app.set('views', path.join(__dirname, 'views')); // COncateno evitando errores de / o de \
 
 // Rutas
-app.use('/api/carts', cartRouter);
-app.use('/api/products', productRouter)
-app.use('/api/sessions', sessionRouter)
+//app.use('/api/carts', cartRouter);
+//app.use('/api/products', productRouter)
+//app.use('/api/sessions', sessionRouter)
 app.use('/public', express.static(__dirname + '/public')) // Concateno rutas
-app.get('/', (req, res) => {
-    res.status(200).send("Hola desde el inicio")
-})
+app.use('/', indexRouter);
 
 
 // Middleware para verificar la session

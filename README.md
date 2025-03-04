@@ -1050,3 +1050,29 @@ userSchema.post("save", async function name(userCreated){
 84) Ver guia de middleware-autorizacion
 
 85) Ver guia de dotenv
+
+86) Creamos un archivo index.routes.js en la carpeta routes para sacar las rutas del server y destinarlas allí
+
+87) Armamos nuestro index.routes.js
+
+import { Router } from "express";
+import productRouter from './products.routes.js';
+import cartRouter from './cart.routes.js'
+import sessionRouter from './sessions.routes.js'
+
+const indexRouter = Router();
+
+indexRouter.use('/api/carts', cartRouter);
+indexRouter.use('/api/products', productRouter)
+indexRouter.use('/api/sessions', sessionRouter)
+
+export default indexRouter;
+
+88) Editamos el server.js
+
+import indexRouter from './routes/index.routes.js'
+
+app.use('/', indexRouter);
+
+89) Debemos sacar los imports anteriores y los app.use ya enviamos al index-routes
+
