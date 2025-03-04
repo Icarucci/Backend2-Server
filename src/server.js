@@ -64,7 +64,7 @@ app.set('views', path.join(__dirname, 'views')); // COncateno evitando errores d
 //app.use('/api/carts', cartRouter);
 //app.use('/api/products', productRouter)
 //app.use('/api/sessions', sessionRouter)
-app.use('/public', express.static(__dirname + '/public')) // Concateno rutas
+//app.use('/public', express.static(__dirname + '/public')) // Concateno rutas
 app.use('/', indexRouter);
 
 
