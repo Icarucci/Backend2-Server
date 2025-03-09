@@ -5,14 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/public/styles.css">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <loginGithub class="background">
   <div class="login-container">
     <div class="pizza-logo">
-      <img src="/public/images/Pizza logo.png" alt="Logo de pizza" class="pizza-icon">
+      <img src="/images/Pizza logo.png" alt="Logo de pizza" class="pizza-icon">
     </div>
-    <h2 class="h2">Ir al menú</h2>
+    <div class="container d-flex justify-content-center aling-items-center vh-120 mt-2 mb-2">
+      <div class="card p-2 shadow-sm cardLogin">
+        <h2 class="h2 mb-1">Ir al menú</h2>
+          <form action="/api/sessions/login" id="loginForm" method="post">
+            <div>
+              <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" name="email" required>
+            </div>
+            <div class="mb-2">
+              <label for="password" class="form-label">Contraseña</label>
+              <input type="password" class="form-control" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Iniciar sesión</button>
+            
+          </form>  
+      </div>
+    </div>
+    <h3>ó</h3>
+    <div class="mb-2 w-100">
+      <a href="/api/sessions/viewRegister" class="github-login-btn a">
+      <img src="https://www.goodwin.edu/files/images/it/icon-new-user.png" alt="Crear usuario logo" class="github-logo">
+      Crear nuevo usuario
+      </a>
+    </div>  
     <h1 class="h1">
       <a href="/api/sessions/github" class="github-login-btn a">
         <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub logo" class="github-logo">

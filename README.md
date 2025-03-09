@@ -1076,3 +1076,167 @@ app.use('/', indexRouter);
 
 89) Debemos sacar los imports anteriores y los app.use ya enviamos al index-routes
 
+90) Para crear el login y register de hbs primero creamos dentro de la carpeta public una carpeta llamada js y dentro creamos dos archivos login.js y register.js y podemos crear tambien una carpeta css por si necesitamos poner un css predeterminado.
+
+
+91) en el archivo main.handlebars, enlazamos de la siguiente forma:
+
+    <title>{{title}}</title>
+    <script> src={{url_js}}</script> //Enlazamos el archivo main.handlebars con el js
+    <link rel="stylesheet" href={{url_css}}> //Enlazamos el archivo main.handlebars con el css
+
+92) En el archivo login.handlebars, editamos agregando el form para el login y el boton para redireccionar a crear un nuevo usuario
+
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/public/styles.css">
+</head>
+<loginGithub class="background">
+  <div class="login-container">
+    <div class="pizza-logo">
+      <img src="/public/images/Pizza logo.png" alt="Logo de pizza" class="pizza-icon">
+    </div>
+    <div class="container d-flex justify-content-center aling-items-center vh-120 mt-2 mb-2">
+      <div class="card p-2 shadow-sm cardLogin">
+        <h2 class="h2 mb-1">Ir al menú</h2>
+          <form action="/api/sessions/login" id="loginForm" method="post">
+            <div>
+              <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" name="email" required>
+            </div>
+            <div class="mb-2">
+              <label for="password" class="form-label">Contraseña</label>
+              <input type="password" class="form-control" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Iniciar sesión</button>
+            
+          </form>  
+      </div>
+    </div>
+    <h3>ó</h3>
+    <div class="mb-2 w-100">
+      <a href="/api/sessions/viewRegister" class="github-login-btn a">
+      <img src="https://www.goodwin.edu/files/images/it/icon-new-user.png" alt="Crear usuario logo" class="github-logo">
+      Crear nuevo usuario
+      </a>
+    </div>  
+    <h1 class="h1">
+      <a href="/api/sessions/github" class="github-login-btn a">
+        <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub logo" class="github-logo">
+        Ingresar con GitHub
+      </a>
+    </h1>
+  </div>
+</loginGithub>
+</html>
+
+93) EN el arcivo login.js realizo la logica
+
+document.addEventListener("DOMContentLoaded", () => {
+    const formLogin = document.getElementById('loginForm');
+
+    formLogin.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const userData = Object.fromEntries(formData);
+
+        try {
+            const response = await fetch('/api/sessions/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData),
+                credentials: "include"
+            });
+
+            const data = await response.json();
+
+            if (response.status === 200) {      
+                Swal.fire({
+                title: "Bienvenido",
+                text: "Usuario logueado correctamente!",
+                icon: "success",
+                position: 'center',
+                timer: 2000
+                }).then( () =>{
+                    e.target.reset()
+                    window.location.href = "http://localhost:8080/api/products"; // Redirijo a la ruta inicial
+                    })
+            } else if(response.status === 401) {
+                Swal.fire({
+                    title: "Error",
+                    text: "Usuario o contraseña no validos!",
+                    icon: "error",
+                    position: 'center',
+                    timer: 2000
+                }).then( () =>{
+                    e.target.reset()
+                    console.log(data);
+                    })
+            }
+            else {
+                Swal.fire({
+                    icon:'error',
+                    title: 'Error',
+                    position: 'center',
+                    timer: 3000
+                })
+                console.log(data);
+            }
+
+            
+        } catch (e) {
+            console.log(e);
+            Swal.fire({
+                icon:'error',
+                title: 'Error',
+                text: "Error en a conexion, intenta nuevamente",
+                position: 'center',
+                timer: 3000
+            })
+        }
+    })
+
+})
+
+
+94) Modifico la seccion del login en el sessions.controller para que no genere error
+
+export const login = async (req, res) => {
+    
+    try {
+        if(!req.user) {
+            return res.status(401).send("Usuario o contraseña invalidos")
+        } else{
+            //Passport-jwt
+            const token = generateToken(req.user);
+            res.status(200).cookie('coderCookie', token, {
+                httpOnly: true,
+                secure: false, // Evitar errores https
+                maxAge: 3600000 // Una hora
+            }).send({message: "Usuario logueado correctamente"})
+
+            //Genero la sesion de mi usuario
+            req.session.user = {
+                email: req.user.email,
+                first_name: req.user.first_name
+            }
+
+        }
+    } catch (e) {
+        console.log(e);
+        res.status(500).send("Error al loguear usuario");
+    }
+}
+
+95) Debo editar el session routes indicando los passportCall para login y register
+
+
+sessionRouter.post('/login', passportCall('login'), login)
+sessionRouter.post('/register', passportCall('register'), register)

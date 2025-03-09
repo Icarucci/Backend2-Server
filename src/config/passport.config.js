@@ -30,7 +30,8 @@ export const passportCall = (strategy) => {
         passport.authenticate(strategy, function (err, user, info) {
             if (err) return next(err);
             if (!user) {
-                return res.status(401).send('<pre>La autenticación falló.\nMotivo: ' + (info?.message ? info.message : info.toString()) + '</pre>');
+                return res.status(401).json({ message: info?.message || 'La autenticación falló.' });
+
 
             }
             req.user = user;
@@ -74,7 +75,7 @@ const initializePassport = () => {
                 return done(null, false, { message: 'Usuario o contraseña incorrectos' })
             }
         }catch(e){
-            return done(e)
+            return done(e, false)
         }
     }))
 

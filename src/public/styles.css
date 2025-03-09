@@ -274,3 +274,8 @@ loginGithub {
   transform: scale(1);
 }
 
+h3 {
+  font-size: 15px;
+  font-weight: bold;
+
+}
