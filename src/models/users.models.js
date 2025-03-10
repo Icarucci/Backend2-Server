@@ -21,7 +21,7 @@ const userSchema = new Schema({
     },
     age: {
         type: Number, 
-        required: true,
+        default: '18',
     },
     rol: { 
         type: String, 

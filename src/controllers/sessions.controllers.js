@@ -30,25 +30,29 @@ export const login = async (req, res) => {
     }
 }
 
-export const register = async (req,res) => {
+export const register = async(req, res) => {
     try {
-        if(!req.user) { // Consulto si en la sesion se encuentra mi usuario
-            return res.status(400).send("El correo ya se encuentra registtado")
+        if(!req.user){
+            return res.status(401).send({message:"El mail ya se encuentra registrado"})
         }
-        res.status(201).send("Usuario creado correctamente")
+        return res.status(201).send({message:"Usuario creado correctamente"})
     } catch (error) {
-        console.log(error)
-        res.status(500).json({message: "Error al registrar usuario"})
-        
+        console.error('Error al registrar el usuario:', error);
+        res.status(500).send({message:"Error al registrar usuario",Error:error})
     }
 }
 
 export const viewRegister = (req, res) => {
-    res.status(200).render('templates/register', {})
+    res.status(200).render('templates/register', {
+        title: "Registro",
+        url_js: "/js/register.js",
+        url_css: "/styles.css"
+    })
 }
 
 export const viewLogin = (req, res) => {
     res.status(200).render('templates/login', {
+        title: "Login",
         url_js: "/js/login.js",
         url_css: "/styles.css"
     })

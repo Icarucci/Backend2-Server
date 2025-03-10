@@ -1240,3 +1240,136 @@ export const login = async (req, res) => {
 
 sessionRouter.post('/login', passportCall('login'), login)
 sessionRouter.post('/register', passportCall('register'), register)
+
+96) En el archuvo register.js
+
+document.addEventListener("DOMContentLoaded", () => {
+    const formRegister = document.getElementById('registerForm');
+
+    formRegister.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(formRegister);
+        const userData = Object.fromEntries(formData);
+        console.log(userData);
+        try {
+            const response = await fetch('http://localhost:8080/api/sessions/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData),
+                credentials: "include"
+            });
+
+            const data = await response.json();
+
+            if (response.status === 201) {      
+                Swal.fire({
+                title: "Felicitaciones!!",
+                text: "Tu usuario fue creado correctamente!",
+                icon: "success",
+                position: 'center',
+                timer: 2000
+                }).then( () =>{
+                    e.target.reset()
+                    window.location.href = "http://localhost:8080/api/sessions/viewLogin"; // Redirijo a la ruta inicial
+                    })
+            } else if(response.status === 401) {
+                Swal.fire({
+                    title: "Error",
+                    text: "El usuario ya existe!",
+                    icon: "error",
+                    position: 'center',
+                    timer: 2000
+                }).then( () =>{
+                    e.target.reset()
+                    window.location.href = "http://localhost:8080/api/sessions/viewLogin"; // Redirijo a la ruta inicial
+                    })
+            }
+            else {
+                Swal.fire({
+                    icon:'error',
+                    title: 'Error',
+                    position: 'center',
+                    timer: 3000
+                })
+                console.log(data);
+            }
+
+            
+        } catch (e) {
+            console.log(e);
+            Swal.fire({
+                icon:'error',
+                title: 'Error',
+                text: "Error en la conexion, intenta nuevamente",
+                position: 'center',
+                timer: 3000
+            })
+        }
+    })
+
+})
+
+
+97) Edito el session_controller
+
+export const viewRegister = (req, res) => {
+    res.status(200).render('templates/register', {
+        url_js: "/js/register.js",
+        url_css: "/styles.css"
+    })
+}
+
+98) Edito el register.handlebars
+
+
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registrarse</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<loginGithub class="background">
+  <div class="login-container-register">
+    <div class="pizza-logo">
+      <img src="/images/Pizza logo.png" alt="Logo de pizza" class="pizza-icon">
+    </div>
+    <div class="container d-flex justify-content-center aling-items-center vh-120 mt-2 mb-2">
+      <div class="card p-2 shadow-sm cardRegister">
+        <h2 class="h2 mb-1">Registrar nuevo usuario</h2>
+          <form action="/api/sessions/register" id="registerForm" method="post">
+            <div class="divisor">
+              <div class="divisor-izq">
+                <div class="mb-2">
+                  <label for="first_name" class="form-label">Nombre</label>
+                  <input type="text" class="form-control" name="first_name" required>
+                </div>
+                <div>
+                  <label for="last_name" class="form-label">Apellido</label>
+                  <input type="text" class="form-control" name="last_name" required>
+                </div>
+                <a href="/api/sessions/viewLogin" class="github-login-btn a mt-4">
+                  Ya tengo una cuenta
+                </a>
+              </div>
+              <div class="divisor-derecha">
+                <div class="mb-2">
+                  <label for="email" class="form-label">Email</label>
+                  <input type="email" class="form-control" name="email" required>
+                </div>
+                <div>
+                  <label for="password" class="form-label">Contraseña</label>
+                  <input type="password" class="form-control" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 mt-4">Crear usuario</button>
+              </div>
+            </div>  
+          </form>  
+      </div>
+    </div>
+  </div>
+</loginGithub>
+</html>
