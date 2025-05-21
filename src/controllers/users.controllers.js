@@ -36,7 +36,7 @@ export const getUsers = async (req,res) => {
 // Crear un nuevo usuario con nombre, email y edad pedidos al usuario via req.body
 export const createUser = async (req,res) => {
     try {
-        const {name, email, age} = req.body;
+        const {name, email} = req.body;
 
         // Verificar si el usuario ya existe por su email
         const existingUser = await userModel.findOne({ email });
@@ -44,7 +44,7 @@ export const createUser = async (req,res) => {
             return res.status(400).send({ message: 'Ya existe un usuario con esa direccion de email' });
         }
 
-        const newUser = await userModel.create({ name, email, age });
+        const newUser = await userModel.create({ name, email});
         res.status(201).send({ message: 'Usuario creado con éxito', user: newUser });//201 es Create
 
     } catch (error) {
